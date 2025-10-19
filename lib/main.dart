@@ -1,5 +1,6 @@
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/pages/Auth/sign_in.dart';
+import 'package:delivery_app/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -25,12 +26,30 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
 
-      home: Builder(
-        builder: (context) {
-          AppConfig.init(context);
+      home: AuthCheck(),
+    );
+  }
+}
+
+class AuthCheck extends StatelessWidget {
+  AuthCheck({super.key});
+  final supabaae = Supabase.instance.client;
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: supabaae.auth.onAuthStateChange,
+      builder: (context, asyncsanpshot) {
+        AppConfig.init(context);
+        if (!asyncsanpshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+        final session = asyncsanpshot.data!.session;
+        if (session != null) {
+          return Home();
+        } else {
           return SignIn();
-        },
-      ),
+        }
+      },
     );
   }
 }

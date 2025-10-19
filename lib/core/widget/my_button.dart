@@ -14,9 +14,7 @@ class MyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        onTap;
-      },
+      onPressed: onTap,
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 15),
         backgroundColor: buttomColor,
