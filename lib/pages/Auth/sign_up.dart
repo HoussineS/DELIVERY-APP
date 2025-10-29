@@ -36,6 +36,7 @@ class _SignUpState extends State<SignUp> {
     });
     if (response != null) {
       showSnackBar(context, response, Colors.redAccent);
+      return;
     }
 
     showSnackBar(context, "Sing Up Succesfuly,Now login", Colors.lightGreen);

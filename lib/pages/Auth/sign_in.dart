@@ -35,6 +35,7 @@ class _SignInState extends State<SignIn> {
     if (respone != null) {
       // ignore: use_build_context_synchronously
       showSnackBar(context, respone, Colors.redAccent);
+      return;
     }
     // ignore: use_build_context_synchronously
     showSnackBar(context, "Succesfuly login", Colors.lightGreen);
