@@ -1,6 +1,5 @@
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/pages/Auth/sign_in.dart';
-import 'package:delivery_app/pages/home.dart';
 import 'package:delivery_app/pages/uI/onbonrding_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

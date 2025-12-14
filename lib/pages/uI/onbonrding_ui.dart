@@ -1,6 +1,7 @@
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/core/color/colors.dart';
 import 'package:delivery_app/models/on_bording_model.dart';
+import 'package:delivery_app/pages/uI/App_Main_Home_Screen.dart';
 import 'package:flutter/material.dart';
 
 class OnbonrdingUi extends StatefulWidget {
@@ -149,7 +150,21 @@ class _OnbonrdingUiState extends State<OnbonrdingUi> {
                     ),
                     SizedBox(height: AppConfig.screenHeight * 0.02),
                     MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 400),
+                            pageBuilder: (_, __, ___) => AppMainHomeScreen(),
+                            transitionsBuilder: (_, animation, __, child) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
                       color: Colors.redAccent,
                       height: AppConfig.screenHeight * 0.07,
                       minWidth: 250,
