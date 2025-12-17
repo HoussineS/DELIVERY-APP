@@ -9,6 +9,7 @@ class FoodModel {
   final String category;
   final int kcal;
   final String time;
+  final String description;
 
   FoodModel({
     required this.id,
@@ -21,6 +22,7 @@ class FoodModel {
     required this.category,
     required this.kcal,
     required this.time,
+    required this.description,
   });
 
   factory FoodModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class FoodModel {
       category: json['category'] ?? '',
       kcal: (json['kcal'] as num?)?.toInt() ?? 0,
       time: json['time'] ?? '',
+      description: json['description'] ?? '',
     );
   }
 

@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'package:delivery_app/core/app_confic.dart';
-import 'package:delivery_app/core/color/colors.dart';
 import 'package:delivery_app/models/product_model.dart';
 import 'package:delivery_app/pages/uI/view_all_product_ui.dart';
 import 'package:delivery_app/widgets/product_style.dart';
