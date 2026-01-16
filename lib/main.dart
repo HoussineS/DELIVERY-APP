@@ -9,15 +9,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
 
-  Supabase.initialize(
+  await Supabase.initialize(
     url: dotenv.env['supabaseURL']!,
     anonKey: dotenv.env['supabaseAnnomKey']!,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-
       home: AuthCheck(),
     );
   }
@@ -33,21 +32,23 @@ class MyApp extends StatelessWidget {
 
 class AuthCheck extends StatelessWidget {
   AuthCheck({super.key});
-  final supabaae = Supabase.instance.client;
+  final supabase = Supabase.instance.client;
+
   @override
   Widget build(BuildContext context) {
+    AppConfig.init(context);
+
     return StreamBuilder(
-      stream: supabaae.auth.onAuthStateChange,
-      builder: (context, asyncsanpshot) {
-        AppConfig.init(context);
-        if (!asyncsanpshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-        final session = asyncsanpshot.data!.session;
-        if (session != null) {
-          return OnbonrdingUi();
+      stream: supabase.auth.onAuthStateChange,
+      builder: (context, snapshot) {
+        final session = snapshot.hasData
+            ? snapshot.data!.session
+            : supabase.auth.currentSession;
+
+        if (session == null) {
+          return const SignIn();
         } else {
-          return SignIn();
+          return const OnbonrdingUi();
         }
       },
     );

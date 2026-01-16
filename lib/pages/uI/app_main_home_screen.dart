@@ -1,4 +1,5 @@
 import 'package:delivery_app/core/app_confic.dart';
+import 'package:delivery_app/pages/uI/favorites_ui.dart';
 import 'package:delivery_app/pages/ui/home.dart';
 import 'package:delivery_app/pages/uI/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,12 @@ class AppMainHomeScreen extends StatefulWidget {
 
 class _AppMainHomeScreenState extends State<AppMainHomeScreen> {
   int currentIndex = 0;
-  final List<Widget> _pages = [Home(), Scaffold(), ProfileScreen(), Scaffold()];
+  final List<Widget> _pages = [
+    Home(),
+    FavoritesUi(),
+    ProfileScreen(),
+    Scaffold(),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

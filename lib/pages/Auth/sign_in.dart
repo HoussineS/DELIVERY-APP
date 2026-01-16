@@ -1,6 +1,7 @@
 import 'package:delivery_app/Service/auth.dart';
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/core/widget/my_button.dart';
+import 'package:delivery_app/main.dart';
 import 'package:delivery_app/pages/Auth/sign_up.dart';
 import 'package:delivery_app/widgets/snack_bar.dart';
 import 'package:flutter/material.dart';
@@ -34,11 +35,32 @@ class _SignInState extends State<SignIn> {
     });
     if (respone != null) {
       // ignore: use_build_context_synchronously
-      showSnackBar(context, respone, Colors.redAccent);
+      showSnackBar(
+        context,
+        respone,
+        Colors.redAccent,
+        duration: Duration(seconds: 2),
+      );
       return;
     }
     // ignore: use_build_context_synchronously
-    showSnackBar(context, "Succesfuly login", Colors.lightGreen);
+    showSnackBar(
+      context,
+      "Succesfuly login",
+      Colors.green,
+      duration: Duration(seconds: 2),
+    );
+    Navigator.of(
+      // ignore: use_build_context_synchronously
+      context,
+    ).pushReplacement(
+      PageRouteBuilder(
+        transitionDuration: Duration(seconds: 1),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+        pageBuilder: (_, _, _) => AuthCheck(),
+      ),
+    );
   }
 
   @override

@@ -45,7 +45,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                   SizedBox(height: 25),
                   _description(),
                   SizedBox(height: AppConfig.screenHeight * 0.04),
-                  _myButton(),
+                  AnimatedButton(),
+                  // AnimatedAddButton(),
                 ],
               ),
             ),
@@ -68,23 +69,6 @@ class _ProductDetailsState extends State<ProductDetails> {
       trimExpandedText: "Read Less",
       trimCollapsedText: "Read More",
       moreStyle: TextStyle(fontWeight: FontWeight.w600, color: red),
-    );
-  }
-
-  Center _myButton() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: red,
-          padding: EdgeInsets.symmetric(horizontal: 130, vertical: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(40),
-          ),
-        ),
-        child: Text("Add to Cart", style: TextStyle(fontSize: 15)),
-      ),
     );
   }
 
@@ -326,3 +310,56 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 }
+
+class AnimatedButton extends StatefulWidget {
+  const AnimatedButton({super.key});
+
+  @override
+  State<AnimatedButton> createState() => _AnimatedButtonState();
+}
+
+class _AnimatedButtonState extends State<AnimatedButton> {
+  bool _isPressed = false;
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        width: AppConfig.screenWidth * 0.8,
+        height: AppConfig.usableHeight * 0.07,
+        child: ElevatedButton(
+          onPressed: () {
+            setState(() {
+              _isPressed = !_isPressed;
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _isPressed ? Colors.green : red,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(30),
+            ),
+          ),
+          child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 250),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: ScaleTransition(scale: animation, child: child),
+              );
+            },
+            child: Text(
+              _isPressed ? "Added ✅" : "Add to Cart",
+              style: TextStyle(fontSize: 16),
+              key: ValueKey(_isPressed),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+

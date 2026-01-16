@@ -21,14 +21,12 @@ class _CategoryListState extends State<CategoryList> {
 
   @override
   void initState() {
-    print('Heloo');
     initialisationData();
     super.initState();
   }
 
   void initialisationData() async {
     try {
-      print("Hello");
       final categories = await fetchCategories();
       if (categories.isNotEmpty) {
         setState(() {
