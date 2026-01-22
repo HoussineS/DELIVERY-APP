@@ -3,6 +3,7 @@ import 'package:delivery_app/pages/Auth/sign_in.dart';
 import 'package:delivery_app/pages/uI/onbonrding_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -13,11 +14,11 @@ void main() async {
     url: dotenv.env['supabaseURL']!,
     anonKey: dotenv.env['supabaseAnnomKey']!,
   );
-  runApp(MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override

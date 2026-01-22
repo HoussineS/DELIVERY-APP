@@ -1,3 +1,4 @@
+import 'package:delivery_app/core/Provider/favorite_provider.dart';
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/pages/uI/favorites_ui.dart';
 import 'package:delivery_app/pages/ui/home.dart';
@@ -15,7 +16,7 @@ class AppMainHomeScreen extends StatefulWidget {
 
 class _AppMainHomeScreenState extends State<AppMainHomeScreen> {
   int currentIndex = 0;
-  final List<Widget> _pages = [
+  final List<Widget> _pages = const [
     Home(),
     FavoritesUi(),
     ProfileScreen(),
@@ -24,7 +25,16 @@ class _AppMainHomeScreenState extends State<AppMainHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[currentIndex],
+      body:  IndexedStack(
+  index: currentIndex,
+  children: List.generate(
+    _pages.length,
+    (i) => _AnimatedTab(
+      isActive: currentIndex == i,
+      child: _pages[i],
+    ),
+  ),
+),
       bottomNavigationBar: Container(
         height: AppConfig.screenHeight * 0.09,
         color: Colors.white,
@@ -78,6 +88,9 @@ class _AppMainHomeScreenState extends State<AppMainHomeScreen> {
         setState(() {
           currentIndex = index;
         });
+        if (index == 1) {
+          favoritesRefreshNotifier.value++;
+        }
       },
       child: Column(
         children: [
@@ -98,3 +111,31 @@ class _AppMainHomeScreenState extends State<AppMainHomeScreen> {
     );
   }
 }
+
+class _AnimatedTab extends StatelessWidget {
+  final bool isActive;
+  final Widget child;
+
+  const _AnimatedTab({
+    required this.isActive,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      ignoring: !isActive,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 250),
+        opacity: isActive ? 1 : 0,
+        child: AnimatedSlide(
+          duration: const Duration(milliseconds: 250),
+          offset: isActive ? Offset.zero : const Offset(0.03, 0),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+

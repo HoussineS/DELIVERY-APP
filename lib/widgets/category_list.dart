@@ -1,20 +1,22 @@
 // ignore_for_file: avoid_print
 
+import 'package:delivery_app/core/Provider/categorie_provider.dart';
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/core/color/colors.dart';
 import 'package:delivery_app/models/categories_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class CategoryList extends StatefulWidget {
+class CategoryList extends ConsumerStatefulWidget {
   const CategoryList({super.key});
 
   @override
-  State<CategoryList> createState() => _CategoryListState();
+  ConsumerState<CategoryList> createState() => _CategoryListState();
 }
 
-class _CategoryListState extends State<CategoryList> {
+class _CategoryListState extends ConsumerState<CategoryList> {
   late Future<List<CategoryModel>> futureCategories = fetchCategories();
   List<CategoryModel> categories = [];
   String? selectedCategorie;
@@ -27,7 +29,10 @@ class _CategoryListState extends State<CategoryList> {
 
   void initialisationData() async {
     try {
-      final categories = await fetchCategories();
+      List<CategoryModel> categories = await fetchCategories();
+      categories.sort(
+        (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      );
       if (categories.isNotEmpty) {
         setState(() {
           this.categories = categories;
@@ -56,6 +61,7 @@ class _CategoryListState extends State<CategoryList> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = ref.read(categorieProvider);
     return FutureBuilder(
       future: futureCategories,
       builder: (context, snapshot) {
@@ -85,6 +91,7 @@ class _CategoryListState extends State<CategoryList> {
                   onTap: () {
                     setState(() {
                       selectedCategorie = categoty.name;
+                      provider.filterByCategorie(selectedCategorie!);
                     });
                   },
                   child: Container(

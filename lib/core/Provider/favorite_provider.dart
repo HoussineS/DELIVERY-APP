@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+final favoritesRefreshNotifier = ValueNotifier<int>(0);
+
 final favotiteProvider = ChangeNotifierProvider<FavoriteProvider>(
   (ref) => FavoriteProvider(),
 );
@@ -23,13 +25,21 @@ class FavoriteProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool isFav(String productId) {
+    return _favId.contains(productId);
+  }
+
   Future<void> toogleFav(String productId) async {
-    if (_favId.contains(productId)) {
+    print('toogle ok  $productId');
+    if (_favId.isNotEmpty && _favId.contains(productId)) {
       //server side
+      print('remove from fav');
       await removeFromfav(productId);
+
       _favId.remove(productId);
     } else {
       await addTofav(productId);
+      print('add to fav');
       _favId.add(productId);
     }
     notifyListeners();
@@ -38,10 +48,12 @@ class FavoriteProvider extends ChangeNotifier {
   Future<void> addTofav(String productId) async {
     if (getUserId == null) return;
     try {
+      print('add to fav');
       await _supabaseClient.from("favorites").insert({
         "userId": getUserId,
         "productId": productId,
       });
+      print('added to fav successfully');
     } catch (e) {
       print(e.toString());
       throw ("Error on add favorite");
@@ -55,6 +67,7 @@ class FavoriteProvider extends ChangeNotifier {
         "userId": getUserId!,
         "productId": productId,
       });
+      print('removed from fav');
     } catch (e) {
       print(e.toString());
       throw ("Error on remove favorite");
@@ -69,6 +82,7 @@ class FavoriteProvider extends ChangeNotifier {
           .select("productId")
           .eq("userId", getUserId!);
       _favId = data.map((row) => row['productId'] as String).toList();
+      notifyListeners();
     } catch (e) {
       print(e.toString());
       throw ("Error on load favorites");

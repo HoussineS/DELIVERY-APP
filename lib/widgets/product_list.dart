@@ -1,45 +1,49 @@
 // ignore_for_file: avoid_print
 
+import 'package:delivery_app/core/Provider/categorie_provider.dart';
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/models/product_model.dart';
 import 'package:delivery_app/pages/uI/view_all_product_ui.dart';
 import 'package:delivery_app/widgets/product_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ProductList extends StatefulWidget {
+class ProductList extends ConsumerStatefulWidget {
   const ProductList({super.key});
 
   @override
-  State<ProductList> createState() => _ProductListState();
+  ConsumerState<ProductList> createState() => _ProductListState();
 }
 
-class _ProductListState extends State<ProductList> {
-  late Future<List<FoodModel>> _productFuture;
-  Future<List<FoodModel>> fecthProduct() async {
-    try {
-      final response = await Supabase.instance.client
-          .from("menu_items")
-          .select();
-      return (response as List)
-          .map((json) => FoodModel.fromJson(json))
-          .toList();
-    } catch (e) {
-      print("Error on fetching product ${e.toString()}");
-      return [];
-    }
-  }
+class _ProductListState extends ConsumerState<ProductList> {
+  // late Future<List<FoodModel>> _productFuture;
+  // Future<List<FoodModel>> fecthProduct() async {
+  //   try {
+  //     final response = await Supabase.instance.client
+  //         .from("menu_items")
+  //         .select();
+  //     return (response as List)
+  //         .map((json) => FoodModel.fromJson(json))
+  //         .toList();
+  //   } catch (e) {
+  //     print("Error on fetching product ${e.toString()}");
+  //     return [];
+  //   }
+  // }
 
-  @override
-  void initState() {
-    _productFuture = fecthProduct();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   _productFuture = fecthProduct();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final provider = ref.watch(categorieProvider);
+
     return Expanded(
       child: Column(
         children: [
@@ -93,37 +97,19 @@ class _ProductListState extends State<ProductList> {
           SizedBox(height: 20),
           SizedBox(
             height: AppConfig.screenHeight * 0.3,
-            child: FutureBuilder(
-              future: _productFuture,
-              builder: (context, asyncSnapshot) {
-                if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: SpinKitFadingCircle(color: Colors.amberAccent),
-                  );
-                }
-                if (!asyncSnapshot.hasData ||
-                    asyncSnapshot.hasError ||
-                    asyncSnapshot.data!.isEmpty) {
-                  return Center(child: Text("No product"));
-                }
-                // sort it ascending from name
-                asyncSnapshot.data!.sort(
-                  (a, b) => a.name[0].toLowerCase().compareTo(
-                    b.name[0].toLowerCase(),
+            child: provider.isLoading
+                ? Center(child: SpinKitCircle(color: Colors.amberAccent))
+                : provider.filtredProduct.isEmpty
+                ? Center(child: Text("No product"))
+                : ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: provider.filtredProduct.length,
+                    itemBuilder: (context, index) {
+                      final product = provider.filtredProduct[index];
+                      print(product.imageCard);
+                      return ProductStyle(product: product, index: index);
+                    },
                   ),
-                );
-
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: asyncSnapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    final product = asyncSnapshot.data![index];
-                    print(product.imageCard);
-                    return ProductStyle(product: product, index: index);
-                  },
-                );
-              },
-            ),
           ),
         ],
       ),
