@@ -45,7 +45,6 @@ class AuthCheck extends StatelessWidget {
         final session = snapshot.hasData
             ? snapshot.data!.session
             : supabase.auth.currentSession;
-
         if (session == null) {
           return const SignIn();
         } else {

@@ -99,6 +99,7 @@ class _FavoritesUiState extends ConsumerState<FavoritesUi>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    bool isLoading = false;
 
     // Listen to changes in the provider
     ref.listen(favotiteProvider, (previous, next) {
@@ -195,19 +196,28 @@ class _FavoritesUiState extends ConsumerState<FavoritesUi>
                           child: Consumer(
                             builder: (context, ref, child) {
                               return GestureDetector(
-                                onTap: () {
-                                  // Assuming name is the productId/key as per logic
-                                  ref
+                                onTap: () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  await ref
                                       .read(favotiteProvider)
                                       .toogleFav(favItem.name);
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: red,
-                                    size: 25,
-                                  ),
+                                  child: isLoading
+                                      ? CircularProgressIndicator(
+                                          color: Colors.red,
+                                        )
+                                      : Icon(
+                                          Icons.delete,
+                                          color: red,
+                                          size: 25,
+                                        ),
                                 ),
                               );
                             },

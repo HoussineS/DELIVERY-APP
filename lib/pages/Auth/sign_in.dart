@@ -1,19 +1,21 @@
 import 'package:delivery_app/Service/auth.dart';
+import 'package:delivery_app/core/Provider/favorite_provider.dart';
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/core/widget/my_button.dart';
 import 'package:delivery_app/main.dart';
 import 'package:delivery_app/pages/Auth/sign_up.dart';
 import 'package:delivery_app/widgets/snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignIn extends StatefulWidget {
+class SignIn extends ConsumerStatefulWidget {
   const SignIn({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  ConsumerState<SignIn> createState() => _SignInState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignInState extends ConsumerState<SignIn> {
   bool isLoading = false;
   final _authService = Auth();
   final _fromKey = GlobalKey<FormState>();
@@ -43,6 +45,7 @@ class _SignInState extends State<SignIn> {
       );
       return;
     }
+    await ref.read(favotiteProvider).loadData();
     // ignore: use_build_context_synchronously
     showSnackBar(
       context,

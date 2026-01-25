@@ -2,14 +2,12 @@
 
 import 'package:delivery_app/core/Provider/categorie_provider.dart';
 import 'package:delivery_app/core/app_confic.dart';
-import 'package:delivery_app/models/product_model.dart';
 import 'package:delivery_app/pages/uI/view_all_product_ui.dart';
 import 'package:delivery_app/widgets/product_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductList extends ConsumerStatefulWidget {
   const ProductList({super.key});

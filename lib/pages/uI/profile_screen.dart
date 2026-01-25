@@ -1,22 +1,26 @@
+import 'package:delivery_app/core/Provider/favorite_provider.dart';
 import 'package:delivery_app/pages/Auth/sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
-        onTap: () {
-          Supabase.instance.client.auth.signOut();
-          Navigator.of(context).push(
+        onTap: () async {
+          await Supabase.instance.client.auth.signOut();
+          ref.read(favotiteProvider).rest();
+
+          Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               transitionDuration: Duration(seconds: 1),
               transitionsBuilder:
