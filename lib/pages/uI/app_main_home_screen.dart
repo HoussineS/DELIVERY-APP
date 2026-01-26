@@ -1,40 +1,40 @@
-import 'package:delivery_app/core/Provider/favorite_provider.dart';
+import 'package:delivery_app/core/Provider/cart_provider.dart';
 import 'package:delivery_app/core/app_confic.dart';
+import 'package:delivery_app/pages/uI/cart_ui.dart';
 import 'package:delivery_app/pages/uI/favorites_ui.dart';
 import 'package:delivery_app/pages/ui/home.dart';
 import 'package:delivery_app/pages/uI/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 
-class AppMainHomeScreen extends StatefulWidget {
+class AppMainHomeScreen extends ConsumerStatefulWidget {
   const AppMainHomeScreen({super.key});
 
   @override
-  State<AppMainHomeScreen> createState() => _AppMainHomeScreenState();
+  ConsumerState<AppMainHomeScreen> createState() => _AppMainHomeScreenState();
 }
 
-class _AppMainHomeScreenState extends State<AppMainHomeScreen> {
+class _AppMainHomeScreenState extends ConsumerState<AppMainHomeScreen> {
   int currentIndex = 0;
   final List<Widget> _pages = const [
     Home(),
     FavoritesUi(),
     ProfileScreen(),
-    Scaffold(),
+    CartUi(),
   ];
   @override
   Widget build(BuildContext context) {
+    final provider = ref.watch(cartProvider);
     return Scaffold(
-      body:  IndexedStack(
-  index: currentIndex,
-  children: List.generate(
-    _pages.length,
-    (i) => _AnimatedTab(
-      isActive: currentIndex == i,
-      child: _pages[i],
-    ),
-  ),
-),
+      body: IndexedStack(
+        index: currentIndex,
+        children: List.generate(
+          _pages.length,
+          (i) => _AnimatedTab(isActive: currentIndex == i, child: _pages[i]),
+        ),
+      ),
       bottomNavigationBar: Container(
         height: AppConfig.screenHeight * 0.09,
         color: Colors.white,
@@ -67,9 +67,12 @@ class _AppMainHomeScreenState extends State<AppMainHomeScreen> {
                 _buildNavItem(Icons.person_outline, 2, "C"),
 
                 Badge(
-                  label: Text("0"),
-                  textStyle: TextStyle(fontSize: 12),
-                  textColor: Colors.red,
+                  label: Text("${provider.cartItems.length}"),
+                  textStyle: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                  backgroundColor: Colors.red,
 
                   child: _buildNavItem(Iconsax.shopping_cart, 3, '2'),
                 ),
@@ -88,9 +91,6 @@ class _AppMainHomeScreenState extends State<AppMainHomeScreen> {
         setState(() {
           currentIndex = index;
         });
-        if (index == 1) {
-          favoritesRefreshNotifier.value++;
-        }
       },
       child: Column(
         children: [
@@ -116,10 +116,7 @@ class _AnimatedTab extends StatelessWidget {
   final bool isActive;
   final Widget child;
 
-  const _AnimatedTab({
-    required this.isActive,
-    required this.child,
-  });
+  const _AnimatedTab({required this.isActive, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -137,5 +134,3 @@ class _AnimatedTab extends StatelessWidget {
     );
   }
 }
-
-

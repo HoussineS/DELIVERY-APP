@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final cartProvider = ChangeNotifierProvider((ref) => null);
+final cartProvider = ChangeNotifierProvider<CartProvider>(
+  (ref) => CartProvider(),
+);
 
 class CartProvider extends ChangeNotifier {
   List<CartItem> _cartItems = [];
@@ -21,6 +23,15 @@ class CartProvider extends ChangeNotifier {
 
   // user id
   String? get getUserId => _supabase.auth.currentUser?.id;
+  //Total price
+  double getAmount() {
+    return _cartItems.fold<double>(
+      0.0,
+      (previousValue, element) =>
+          previousValue + (element.quantity * element.productData['price']),
+    );
+  }
+
   //rest state
   void rest() {
     _cartItems = [];
@@ -35,6 +46,7 @@ class CartProvider extends ChangeNotifier {
           .from("cart")
           .select()
           .eq("user_id", getUserId!);
+      print(response.toString());
 
       if (response.isNotEmpty) {
         // ignore: avoid_function_literals_in_foreach_calls
@@ -55,6 +67,8 @@ class CartProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint(e.toString());
       throw ("Error on remove item");
+    } finally {
+      notifyListeners();
     }
   }
 
@@ -74,9 +88,10 @@ class CartProvider extends ChangeNotifier {
           })
           .select()
           .single();
+      print("finich");
       _cartItems.add(CartItem.fromMap(response));
     } catch (e) {
-      throw ("Error on add item");
+      throw ("Error on add item ${e.toString()}");
     } finally {
       notifyListeners();
     }

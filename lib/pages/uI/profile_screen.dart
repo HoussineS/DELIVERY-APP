@@ -1,3 +1,4 @@
+import 'package:delivery_app/core/Provider/cart_provider.dart';
 import 'package:delivery_app/core/Provider/favorite_provider.dart';
 import 'package:delivery_app/pages/Auth/sign_in.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         onTap: () async {
           await Supabase.instance.client.auth.signOut();
           ref.read(favotiteProvider).rest();
+          ref.read(cartProvider).rest();
 
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(

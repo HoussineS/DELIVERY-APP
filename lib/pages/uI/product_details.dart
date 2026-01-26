@@ -1,23 +1,29 @@
+// ignore_for_file: avoid_print
+
+import 'package:delivery_app/core/Provider/cart_provider.dart';
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/core/color/colors.dart';
 import 'package:delivery_app/models/product_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:readmore/readmore.dart';
 
-class ProductDetails extends StatefulWidget {
+class ProductDetails extends ConsumerStatefulWidget {
   final FoodModel product;
   const ProductDetails({super.key, required this.product});
 
   @override
-  State<ProductDetails> createState() => _ProductDetailsState();
+  ConsumerState<ProductDetails> createState() => _ProductDetailsState();
 }
 
-class _ProductDetailsState extends State<ProductDetails> {
+class _ProductDetailsState extends ConsumerState<ProductDetails> {
   int quantity = 1;
   bool _isEnabled = true;
   @override
   Widget build(BuildContext context) {
+    final providerCart = ref.watch(cartProvider);
+    final cart = providerCart.cartItems;
     return Scaffold(
       appBar: myAppBar(context),
       extendBodyBehindAppBar: true,
@@ -45,7 +51,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   SizedBox(height: 25),
                   _description(),
                   SizedBox(height: AppConfig.screenHeight * 0.04),
-                  AnimatedButton(),
+                  AnimatedButton(product: widget.product),
                   // AnimatedAddButton(),
                 ],
               ),
@@ -311,17 +317,21 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 }
 
-class AnimatedButton extends StatefulWidget {
-  const AnimatedButton({super.key});
+class AnimatedButton extends ConsumerStatefulWidget {
+  final FoodModel product;
+  const AnimatedButton({super.key, required this.product});
 
   @override
-  State<AnimatedButton> createState() => _AnimatedButtonState();
+  ConsumerState<AnimatedButton> createState() => _AnimatedButtonState();
 }
 
-class _AnimatedButtonState extends State<AnimatedButton> {
-  bool _isPressed = false;
+class _AnimatedButtonState extends ConsumerState<AnimatedButton> {
+  bool isLoding = false;
   @override
   Widget build(BuildContext context) {
+    final provider = ref.watch(cartProvider);
+    bool isPressed = provider.isOnCart(widget.product.name);
+
     return Center(
       child: AnimatedContainer(
         duration: Duration(milliseconds: 300),
@@ -329,13 +339,29 @@ class _AnimatedButtonState extends State<AnimatedButton> {
         width: AppConfig.screenWidth * 0.8,
         height: AppConfig.usableHeight * 0.07,
         child: ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _isPressed = !_isPressed;
-            });
+          onPressed: () async {
+            if (isPressed) {
+              return;
+            }
+            try {
+              setState(() {
+                isLoding = true;
+              });
+              await provider.addToCart(
+                widget.product.name,
+                widget.product.toMap(),
+              );
+            } catch (e) {
+              print(e.toString());
+            } finally {
+              setState(() {
+                isLoding = false;
+                isPressed = true;
+              });
+            }
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: _isPressed ? Colors.green : red,
+            backgroundColor: isPressed ? Colors.green : red,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadiusGeometry.circular(30),
@@ -349,17 +375,16 @@ class _AnimatedButtonState extends State<AnimatedButton> {
                 child: ScaleTransition(scale: animation, child: child),
               );
             },
-            child: Text(
-              _isPressed ? "Added ✅" : "Add to Cart",
-              style: TextStyle(fontSize: 16),
-              key: ValueKey(_isPressed),
-            ),
+            child: isLoding
+                ? CircularProgressIndicator()
+                : Text(
+                    isPressed ? "Added ✅" : "Add to Cart",
+                    style: TextStyle(fontSize: 16),
+                    key: ValueKey(isPressed),
+                  ),
           ),
         ),
       ),
     );
   }
 }
-
-
-

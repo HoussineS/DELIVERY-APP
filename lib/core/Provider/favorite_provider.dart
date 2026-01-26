@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final favoritesRefreshNotifier = ValueNotifier<int>(0);
+// final favoritesRefreshNotifier = ValueNotifier<int>(0);
 
 final favotiteProvider = ChangeNotifierProvider<FavoriteProvider>(
   (ref) => FavoriteProvider(),

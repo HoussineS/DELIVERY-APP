@@ -1,4 +1,5 @@
 import 'package:delivery_app/Service/auth.dart';
+import 'package:delivery_app/core/Provider/cart_provider.dart';
 import 'package:delivery_app/core/Provider/favorite_provider.dart';
 import 'package:delivery_app/core/app_confic.dart';
 import 'package:delivery_app/core/widget/my_button.dart';
@@ -45,7 +46,8 @@ class _SignInState extends ConsumerState<SignIn> {
       );
       return;
     }
-    await ref.read(favotiteProvider).loadData();
+    ref.read(favotiteProvider).loadData();
+    ref.read(cartProvider).loadData();
     // ignore: use_build_context_synchronously
     showSnackBar(
       context,
